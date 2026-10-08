@@ -107,17 +107,21 @@ func alpha_to_world(a: float) -> Vector2:
 			if (a >= 3 and a < 4):
 				res.x = - 1.0
 				res.y = - ((a - 3) * 2.0 - 1.0)
+			#debug_text.text = str(a)
 		Shape.HEXAGON:
 			pass
 	return res
 	
 # called by Godot every frame
 func _process(delta: float) -> void:
+	if shape == Shape.SQUARE:
+		runner_a = wrapf(runner_a, 0.0, 4.0)
+	
 	v = slider_v.value
 	text_v.text = str(v)
 	slider_v.release_focus()
 	turn_by_turn = turn_based_button.button_pressed
-	debug_text.text = ""
+	#debug_text = ""
 	
 	if (paused):
 		pause_elapsed += delta

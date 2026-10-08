@@ -87,10 +87,10 @@ offset_bottom = 641.0
 text = "runner speed"
 
 [node name="debug_text" type="RichTextLabel" parent="CanvasLayer" unique_id=1160383741]
-offset_left = 936.0
-offset_top = 2.0
-offset_right = 1152.0
-offset_bottom = 103.0
+offset_left = 759.0
+offset_top = 21.0
+offset_right = 975.0
+offset_bottom = 122.0
 mouse_filter = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 scroll_active = false
