@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://cr334ubd4q555"]
+
+[ext_resource type="Script" uid="uid://btrum01olpjt7" path="res://main.gd" id="1_ig7tw"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_4kxuq"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_4kxuq"]
+
+[node name="Main" type="Node2D" unique_id=1637681690]
+script = ExtResource("1_ig7tw")
+
+[node name="Pool_circle" type="MeshInstance2D" parent="." unique_id=901295855]
+modulate = Color(0.766022, 0.9997937, 1, 1)
+z_index = -5
+mesh = SubResource("SphereMesh_4kxuq")
+
+[node name="Pool_square" type="MeshInstance2D" parent="." unique_id=118472377]
+modulate = Color(0.766022, 0.9997937, 1, 1)
+z_index = -5
+mesh = SubResource("BoxMesh_4kxuq")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1678704963]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1234060428]
+
+[node name="Button_circle" type="Button" parent="CanvasLayer" unique_id=1384696803]
+offset_left = 54.0
+offset_top = 52.0
+offset_right = 120.0
+offset_bottom = 84.0
+text = "Circle"
+
+[node name="Button_square" type="Button" parent="CanvasLayer" unique_id=2037294926]
+offset_left = 54.0
+offset_top = 113.0
+offset_right = 120.0
+offset_bottom = 145.0
+text = "Square"
+
+[node name="turn_based_button" type="CheckButton" parent="CanvasLayer" unique_id=16707937]
+offset_left = 28.0
+offset_top = 187.0
+offset_right = 161.0
+offset_bottom = 218.0
+text = "turn-based"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer" unique_id=1520867121]
+offset_left = 210.0
+offset_top = 604.0
+offset_right = 791.0
+offset_bottom = 620.0
+focus_mode = 1
+max_value = 7.0
+step = 0.1
+value = 3.0
+tick_count = 8
+
+[node name="text_v" type="RichTextLabel" parent="CanvasLayer" unique_id=1381143775]
+offset_left = 811.0
+offset_top = 599.0
+offset_right = 947.0
+offset_bottom = 653.0
+text = "3.01"
+
+[node name="victory" type="RichTextLabel" parent="CanvasLayer" unique_id=1305556450]
+offset_left = 30.0
+offset_top = 310.0
+offset_right = 1153.0
+offset_bottom = 461.0
+theme_override_font_sizes/normal_font_size = 64
+text = "runner wins"
+horizontal_alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=14867813]
+offset_left = 132.0
+offset_top = 587.0
+offset_right = 212.0
+offset_bottom = 641.0
+text = "runner speed"
+
+[connection signal="button_up" from="CanvasLayer/Button_circle" to="." method="_on_button_circle_button_up"]
+[connection signal="button_up" from="CanvasLayer/Button_square" to="." method="_on_button_square_button_up"]
