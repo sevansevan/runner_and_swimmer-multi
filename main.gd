@@ -18,7 +18,7 @@ var runner_a : float = PI / 2
 
 var mouse_control = false
 var turn_by_turn: bool = false
-@export var dt = 1.0 / 100.0
+@export var dt = 1.0 / 100.0 # can be modified in editor
 var v = 3.0
 
 var ghost_player: Vector2 = Vector2.ZERO
@@ -111,7 +111,25 @@ func alpha_to_world(a: float) -> Vector2:
 		Shape.HEXAGON:
 			pass
 	return res
-	
+
+func world_to_alpha(vec: Vector2) -> float:
+	var res : float = 0.0
+	match shape:
+		Shape.CIRCLE:
+			return atan2(- vec.y, vec.x)
+		Shape.SQUARE:
+			if (vec.x > 0 and abs(vec.y) <= abs(vec.x)): #right side
+				res = 1.5 + 0.5 * vec.y / vec.x #where 1.5 = RIGHT vector's alpha
+			if (vec.x < 0 and abs(vec.y) <= abs(vec.x)):
+				res = 3.5 + 0.5 * vec.y / vec.x #where 3.5 = LEFT vector's alpha
+			if (vec.y > 0 and abs(vec.x) < abs(vec.y)):
+				res = 2.5 - 0.5 * vec.x / vec.y #where 2.5 = DOWN vector's alpha
+			if (vec.y < 0 and abs(vec.x) < abs(vec.y)):
+				res = 0.5 - 0.5 * vec.x / vec.y #where 0.5 = UP vector's alpha
+			return res
+		Shape.HEXAGON:
+			return 0.0
+	return 0.0
 # called by Godot every frame
 func _process(delta: float) -> void:
 	if shape == Shape.SQUARE:
@@ -121,7 +139,8 @@ func _process(delta: float) -> void:
 	text_v.text = str(v)
 	slider_v.release_focus()
 	turn_by_turn = turn_based_button.button_pressed
-	#debug_text = ""
+	debug_text.text = "@Joran: ctrl F this" #use this wherever to display anything in this box
+	# you may delete the other line updating it I no longer need it
 	
 	if (paused):
 		pause_elapsed += delta
@@ -144,32 +163,57 @@ func _process(delta: float) -> void:
 				swimmer = ghost_player
 				turn += 1
 				swimmer_history.append(ghost_player)
-		else:
-			var dist = mp.distance_to(runner)
-			if shape == Shape.SQUARE:
-				dist = mp.distance_to(runner) * 0.5  #no idea why let's be honest
+		else: #runner_turn
+			var input_by_a: bool = true;
+			if (input_by_a):
+				var mouse_a = world_to_alpha(mp)
+				var diff = 0.0
+				if shape == Shape.CIRCLE:
+					diff = angle_difference(runner_a, mouse_a)
+				if shape == Shape.SQUARE:
+					diff = mouse_a - runner_a
+					diff = wrap(diff, -2, 2)
+				debug_text.text = str(diff)
+				if (abs(diff) > v * tdt):
+					if diff > 0:
+						ghost_player = alpha_to_world(runner_a + v * tdt)
+					else:
+						ghost_player = alpha_to_world(runner_a - v * tdt)
+				else:
+					ghost_player = alpha_to_world(mouse_a)
 				
-			if (dist > v * tdt):
-				dist = v * tdt
-			if shape == Shape.SQUARE:
-				dist = dist
-				
-			var pos_1 = alpha_to_world(runner_a + dist)
-			var pos_2 = alpha_to_world(runner_a - dist)
-			
-			var da = 0.0
-			if (mp.distance_to(pos_1) < mp.distance_to(pos_2)):
-				da = dist
-				ghost_player = pos_1
+				if Input.is_action_just_pressed("lmb"):
+					runner = ghost_player
+					runner_a = world_to_alpha(runner)
+					turn += 1
+					runner_history.append(ghost_player)
 			else:
-				da = - dist
-				ghost_player = pos_2
+				#input by distance
+				var da = 0.0
+				var dist = mp.distance_to(runner)
+				if shape == Shape.SQUARE:
+					dist = mp.distance_to(runner) * 0.5  #no idea why let's be honest
+					
+				if (dist > v * tdt):
+					dist = v * tdt
+				if shape == Shape.SQUARE:
+					dist = dist
+					
+				var pos_1 = alpha_to_world(runner_a + dist)
+				var pos_2 = alpha_to_world(runner_a - dist)
 				
-			if Input.is_action_just_pressed("lmb"):
-				runner_a += da
-				runner = ghost_player
-				turn += 1
-				runner_history.append(ghost_player)
+				if (mp.distance_to(pos_1) < mp.distance_to(pos_2)):
+					da = dist
+					ghost_player = pos_1
+				else:
+					da = - dist
+					ghost_player = pos_2
+				
+				if Input.is_action_just_pressed("lmb"):
+					runner_a += da
+					runner = ghost_player
+					turn += 1
+					runner_history.append(ghost_player)
 			
 	else:
 		var d : Vector2 = Vector2.ZERO
